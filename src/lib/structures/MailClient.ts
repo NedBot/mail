@@ -1,6 +1,9 @@
 import { KlasaClient, KlasaClientOptions } from "klasa";
 import * as config from "../../config";
 
+// Inbox
+import InboxManager from "./InboxManager";
+
 // Structures
 import Embed from "./Embed";
 import permissionLevels from "./Permissions";
@@ -14,6 +17,7 @@ export class MailClient extends KlasaClient {
 	public readonly embed = Embed;
 	public readonly prefix: string = config.clientCommandPrefix;
 	public readonly queries = new MongoCommonQuery(this);
+	public readonly inbox = new InboxManager(this);
 
 	public constructor(options: KlasaClientOptions) {
 		super({
