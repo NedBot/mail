@@ -5,6 +5,10 @@ import * as config from "../../config";
 import Embed from "./Embed";
 import permissionLevels from "./Permissions";
 
+// Database
+import { Database } from "../../types/Enums";
+import ClientSchema from "../schemas/ClientSchema";
+
 export class MailClient extends KlasaClient {
 	public readonly embed = Embed;
 	public readonly prefix: string = config.clientCommandPrefix;
@@ -12,8 +16,13 @@ export class MailClient extends KlasaClient {
 	public constructor(options: KlasaClientOptions) {
 		super({
 			...options,
-			permissionLevels
+			permissionLevels,
+			gateways: {
+				clientStorage: { schema: ClientSchema }
+			}
 		});
+
+		this.gateways.register(Database.Threads);
 	}
 
 	public async start(token: string = config.discordConnectionString) {
