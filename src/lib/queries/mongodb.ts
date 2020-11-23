@@ -1,4 +1,6 @@
 import { KlasaClient } from "klasa";
+import { Databases } from "../../types/Enums";
+import { RawThread } from "../structures/InboxThread";
 import { CommonQuery } from "./common";
 
 export class MongoCommonQuery implements CommonQuery {
@@ -10,5 +12,9 @@ export class MongoCommonQuery implements CommonQuery {
 
 	public get provider() {
 		return this.client.providers.default;
+	}
+
+	public fetchAllThreads() {
+		return this.provider.getAll(Databases.Threads) as Promise<RawThread[]>;
 	}
 }
