@@ -7,11 +7,13 @@ import permissionLevels from "./Permissions";
 
 // Database
 import { Databases } from "../../types/Enums";
+import { MongoCommonQuery } from "../queries/mongodb";
 import ClientSchema from "../schemas/ClientSchema";
 
 export class MailClient extends KlasaClient {
 	public readonly embed = Embed;
 	public readonly prefix: string = config.clientCommandPrefix;
+	public readonly queries = new MongoCommonQuery(this);
 
 	public constructor(options: KlasaClientOptions) {
 		super({
