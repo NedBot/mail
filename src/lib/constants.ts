@@ -3,7 +3,6 @@ import { clientCommandPrefix } from "../config";
 import { Permissions } from "../types/Enums";
 
 export const CLIENT_OPTIONS: KlasaClientOptions = {
-	readyMessage: (client) => `Logged in as ${client.user!.tag}!`,
 	console: { utc: true, useColor: true, timestamps: "DD/MM/YY HH:mm:ss" },
 	customPromptDefaults: { quotedStringSupport: true },
 	consoleEvents: { verbose: true, debug: true },
