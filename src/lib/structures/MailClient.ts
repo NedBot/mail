@@ -6,7 +6,7 @@ import Embed from "./Embed";
 import permissionLevels from "./Permissions";
 
 // Database
-import { Database } from "../../types/Enums";
+import { Databases } from "../../types/Enums";
 import ClientSchema from "../schemas/ClientSchema";
 
 export class MailClient extends KlasaClient {
@@ -22,7 +22,7 @@ export class MailClient extends KlasaClient {
 			}
 		});
 
-		this.gateways.register(Database.Threads);
+		this.gateways.register(Databases.Threads);
 	}
 
 	public async start(token: string = config.discordConnectionString) {

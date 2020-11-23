@@ -9,7 +9,7 @@ export const enum Colors {
 	Red = "#f44444"
 }
 
-export const enum Database {
+export const enum Databases {
 	ClientStorage = "clientStorage",
 	Threads = "threads"
 }
