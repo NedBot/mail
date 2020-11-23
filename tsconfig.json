@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"outDir": "dist",
+		"rootDir": "src",
+		"removeComments": true,
+		"strict": true,
+		"noImplicitAny": false,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"lib": ["ESNext"]
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "bwd"]
+}

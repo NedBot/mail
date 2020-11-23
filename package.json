@@ -1,0 +1,28 @@
+{
+	"name": "nedmail",
+	"version": "2.0.0",
+	"description": "A simple communication tool connecting staff with their members.",
+	"main": "dist/index.js",
+	"homepage": "https://github.com/NedBot/mail#readme",
+	"repository": "https://github.com/NedBot/mail",
+	"bugs": "https://github.com/NedBot/mail/issues",
+	"author": "NedBot <contact@nedbot.org>",
+	"license": "Apache-2.0",
+	"private": true,
+	"contributors": [
+		"T3NED <george@nedbot.org>"
+	],
+	"scripts": {
+		"start": "node dist/index.js",
+		"build": "tsc"
+	},
+	"dependencies": {
+		"discord.js": "^12.5.0",
+		"klasa": "^0.5.0",
+		"mongodb": "^3.6.3"
+	},
+	"devDependencies": {
+		"@types/mongodb": "^3.5.34",
+		"@types/node": "^14.14.9"
+	}
+}
