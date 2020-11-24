@@ -13,3 +13,7 @@ export const enum Databases {
 	ClientStorage = "clientStorage",
 	Threads = "threads"
 }
+
+export const enum Tasks {
+	CloseThread = "closeThread"
+}

@@ -1,26 +1,35 @@
-import { Client, GuildMember, TextChannel } from "discord.js";
+import { Client, GuildMember, TextBasedChannel, TextChannel } from "discord.js";
+import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
 
 export class Thread {
 	public client!: Client;
-	public member!: GuildMember;
+	public member: GuildMember | null = null;
 	public status: ThreadStatus = ThreadStatus.Waiting;
 	public id: number = 0;
 	public channelID: string | null = null;
-	public userID: string;
+	public userID!: string;
 
-	public constructor(member: GuildMember) {
-		Object.defineProperty(this, "client", { value: member.client });
-		Object.defineProperty(this, "member", { value: member.user });
-		this.userID = member.user.id;
+	public constructor(member: GuildMember | null, client?: Client) {
+		if (!client && member) client = member.client;
+		if (!client) throw "You must pass an instance of the client";
+		Object.defineProperty(this, "member", { value: member });
+		Object.defineProperty(this, "client", { value: client });
+		setTimeout(() => this.close(10000), 5000);
 	}
 
 	public restore(sync: boolean): Promise<this> {
-		const openThread = this.client.inbox.openThreadCache.get(this.member.id);
+		const openThread = this.client.inbox.openThreadCache.get(this.member!.id);
 		if (!openThread) return this.create();
 		if (sync) return this.sync();
 		this.patch(openThread);
 		return this.open();
+	}
+
+	public async restoreOpenThreadByID(threadID: number): Promise<this> {
+		const thread = await this.client.queries.fetchThreadByID(threadID);
+		if (thread) this.patch(thread);
+		return this;
 	}
 
 	public async open() {
@@ -40,7 +49,10 @@ export class Thread {
 		return this;
 	}
 
-	public async close(_delay: number = 0) {
+	public async close(delay: number = 0) {
+		// Schedule the close for later
+		if (delay) return this.scheduleClose(delay);
+
 		// Delete the channel
 		const { channel } = this;
 		if (channel) {
@@ -56,6 +68,21 @@ export class Thread {
 		return this;
 	}
 
+	public async cancelClose() {
+		const task = this.client.schedule.get(`close_${this.id}`);
+		if (task) await task.delete().catch(() => null);
+		return this;
+	}
+
+	private async scheduleClose(delay: number) {
+		await this.cancelClose();
+		await this.client.schedule.create(Tasks.CloseThread, delay, {
+			id: `close_${this.id}`,
+			data: { threadID: this.id }
+		});
+		return this;
+	}
+
 	public async suspend() {
 		// Move the channel
 		const { channel } = this;
@@ -68,7 +95,7 @@ export class Thread {
 	}
 
 	public async unsuspend(channelID: string) {
-		const openThread = this.client.inbox.openThreadCache.get(this.member.id);
+		const openThread = this.client.inbox.openThreadCache.get(this.member!.id);
 		if (openThread) return this;
 
 		const thread = await this.client.queries.fetchThreadByChannelID(channelID);
