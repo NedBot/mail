@@ -46,6 +46,8 @@ export default class InboxManager {
 		const thread = await new Thread(member).restore(false);
 		if (thread.status === ThreadStatus.Waiting) return;
 
+		await thread.receiveMessage(message);
+
 		return thread;
 	}
 
