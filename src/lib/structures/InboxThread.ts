@@ -37,6 +37,22 @@ export class Thread {
 		return this;
 	}
 
+	public async close(_delay: number = 0) {
+		// Delete the channel
+		const { channel } = this;
+		if (channel) {
+			await channel.send("Closing thread...");
+			channel.delete("Thread closed").catch(() => null);
+		}
+
+		// Close the thread
+		this.status = ThreadStatus.Closed;
+		this.channelID = null;
+		await this.save();
+
+		return this;
+	}
+
 	private async create() {
 		// Set the ID for this thread
 		this.id = this.client.settings!.get(ClientStorage.threadID) + 1;
