@@ -35,10 +35,14 @@ export class Thread {
 		return this;
 	}
 
-	public async receiveMessage(message: Message) {
-		const inboxmessage = new InboxMessage(message).setType(InboxMessageType.Recipient);
-		await this.saveMessage(inboxmessage.toJSON());
-		return this;
+	public receiveMessage(message: Message) {
+		const inboxMessage = new InboxMessage(message).setType(InboxMessageType.Recipient);
+		return this.saveMessage(inboxMessage.toJSON());
+	}
+
+	public reply(message: Message) {
+		const replyMessage = new InboxMessage(message).setType(InboxMessageType.Reply);
+		return this.saveMessage(replyMessage.toJSON());
 	}
 
 	public async open() {
