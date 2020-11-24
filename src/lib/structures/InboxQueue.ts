@@ -32,4 +32,4 @@ export class InboxQueue {
 	}
 }
 
-export type QueueItem = () => Promise<Thread>;
+export type QueueItem = () => Promise<Thread | undefined>;
