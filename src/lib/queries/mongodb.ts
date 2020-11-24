@@ -23,6 +23,11 @@ export class MongoCommonQuery implements CommonQuery {
 		return this.provider.get(Databases.Threads, query) as Promise<RawThread | undefined>;
 	}
 
+	public fetchThreadByChannelID(channelID: string) {
+		const query = JSON.stringify({ channelID: channelID });
+		return this.provider.get(Databases.Threads, query) as Promise<RawThread | undefined>;
+	}
+
 	public async createThread(thread: RawThread) {
 		const query = JSON.stringify({ id: thread.id });
 		await this.provider.create(Databases.Threads, query, thread);
