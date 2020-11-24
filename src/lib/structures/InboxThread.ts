@@ -1,7 +1,7 @@
-import { Client, GuildMember, TextChannel } from "discord.js";
+import { Client, GuildMember, Message, TextChannel } from "discord.js";
 import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
-import { RawInboxMessage, Transcript } from "./InboxMessage";
+import { InboxMessage, InboxMessageType, RawInboxMessage, Transcript } from "./InboxMessage";
 
 export class Thread {
 	public client!: Client;
@@ -31,6 +31,12 @@ export class Thread {
 	public async restoreOpenThreadByID(threadID: number): Promise<this> {
 		const thread = await this.client.queries.fetchThreadByID(threadID);
 		if (thread) this.patch(thread);
+		return this;
+	}
+
+	public async receiveMessage(message: Message) {
+		const inboxmessage = new InboxMessage(message).setType(InboxMessageType.Recipient);
+		await this.saveMessage(inboxmessage.toJSON());
 		return this;
 	}
 

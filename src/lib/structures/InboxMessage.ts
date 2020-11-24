@@ -9,7 +9,7 @@ export class InboxMessage {
 	public isAlert = false;
 	public errored = false;
 
-	public constructor(message?: RawInboxMessage) {
+	public constructor(message?: RawInboxMessage | Message) {
 		if (message) this.patch(message);
 	}
 
@@ -82,14 +82,26 @@ export class InboxMessage {
 		};
 	}
 
-	private patch(message: RawInboxMessage) {
-		this.type = message.type;
-		this.author = message.author;
-		this.content = message.content;
-		this.attachments = message.attachments;
-		this.replyFlag = message.replyFlag;
-		this.isAlert = message.isAlert;
-		this.errored = message.errored;
+	private patch(message: RawInboxMessage | Message) {
+		if (message instanceof Message) {
+			this.author = {
+				id: message.author.id,
+				name: message.author.tag,
+				avatar: message.author.displayAvatarURL()
+			};
+
+			this.setContent(message);
+			this.setAttachments(message);
+		} else {
+			this.type = message.type;
+			this.author = message.author;
+			this.content = message.content;
+			this.attachments = message.attachments;
+			this.replyFlag = message.replyFlag;
+			this.isAlert = message.isAlert;
+			this.errored = message.errored;
+		}
+
 		return this;
 	}
 }
