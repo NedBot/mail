@@ -131,6 +131,6 @@ export interface InboxMessageAttachment {
 }
 
 export interface Transcript {
-	messages: RawInboxMessage;
+	messages: RawInboxMessage[];
 	read: boolean;
 }

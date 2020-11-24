@@ -1,6 +1,7 @@
-import { Client, GuildMember, TextBasedChannel, TextChannel } from "discord.js";
+import { Client, GuildMember, TextChannel } from "discord.js";
 import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
+import { RawInboxMessage, Transcript } from "./InboxMessage";
 
 export class Thread {
 	public client!: Client;
@@ -9,13 +10,14 @@ export class Thread {
 	public id: number = 0;
 	public channelID: string | null = null;
 	public userID!: string;
+	public messages: RawInboxMessage[] = [];
+	public read = true;
 
 	public constructor(member: GuildMember | null, client?: Client) {
 		if (!client && member) client = member.client;
 		if (!client) throw "You must pass an instance of the client";
 		Object.defineProperty(this, "member", { value: member });
 		Object.defineProperty(this, "client", { value: client });
-		setTimeout(() => this.close(10000), 5000);
 	}
 
 	public restore(sync: boolean): Promise<this> {
@@ -131,6 +133,8 @@ export class Thread {
 		this.id = thread.id;
 		this.userID = thread.userID;
 		this.channelID = thread.channelID;
+		this.messages = thread.transcript.messages;
+		this.read = thread.transcript.read;
 
 		if (thread.status === ThreadStatus.Open) {
 			this.client.inbox.openThreadCache.set(thread.userID, thread);
@@ -157,6 +161,11 @@ export class Thread {
 		}
 
 		return this;
+	}
+
+	private saveMessage(message: RawInboxMessage) {
+		this.messages.push(message);
+		return this.save();
 	}
 
 	private async createChannel(tries: number = 1): Promise<TextChannel | null> {
@@ -186,7 +195,8 @@ export class Thread {
 			status: this.status,
 			id: this.id,
 			userID: this.userID,
-			channelID: this.channelID
+			channelID: this.channelID,
+			transcript: { read: this.read, messages: this.messages }
 		};
 	}
 }
@@ -203,4 +213,5 @@ export interface RawThread {
 	id: number;
 	userID: string;
 	channelID: string | null;
+	transcript: Transcript;
 }
