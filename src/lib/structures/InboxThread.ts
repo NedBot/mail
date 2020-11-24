@@ -18,6 +18,7 @@ export class Thread {
 		if (!client) throw "You must pass an instance of the client";
 		Object.defineProperty(this, "member", { value: member });
 		Object.defineProperty(this, "client", { value: client });
+		if (member) this.userID = member.id;
 	}
 
 	public restore(sync: boolean): Promise<this> {
