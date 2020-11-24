@@ -30,6 +30,9 @@ export class Thread {
 		if (!channel) channel = await this.createChannel();
 		if (!channel) return this;
 
+		// Move the channel
+		channel.setParent(this.client.inbox.incomingThreadCategory);
+
 		// Open the thread
 		this.status = ThreadStatus.Open;
 		await this.save();
@@ -49,6 +52,31 @@ export class Thread {
 		this.status = ThreadStatus.Closed;
 		this.channelID = null;
 		await this.save();
+
+		return this;
+	}
+
+	public async suspend() {
+		// Move the channel
+		const { channel } = this;
+		if (channel) channel.setParent(this.client.inbox.archivedThreadCategory).catch(() => null);
+
+		// Suspend the thread
+		this.status = ThreadStatus.Suspended;
+		await this.save();
+		return this;
+	}
+
+	public async unsuspend(channelID: string) {
+		const openThread = this.client.inbox.openThreadCache.get(this.member.id);
+		if (openThread) return this;
+
+		const thread = await this.client.queries.fetchThreadByChannelID(channelID);
+
+		if (thread && thread.status === ThreadStatus.Suspended) {
+			this.patch(thread);
+			return this.open();
+		}
 
 		return this;
 	}

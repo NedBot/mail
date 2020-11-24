@@ -1,5 +1,10 @@
 import { Client, Message } from "discord.js";
-import { mainGuildID, inboxGuildID, incomingThreadCategory } from "../../config";
+import {
+	mainGuildID,
+	inboxGuildID,
+	incomingThreadCategory,
+	archivedThreadCategory
+} from "../../config";
 import { ClientStorage } from "../../types/settings/ClientStorage";
 
 // Inbox structures
@@ -27,6 +32,7 @@ export default class InboxManager {
 	}
 
 	public registerMessage(message: Message) {
+		// @ts-ignore
 		return this.queue.push(() => this.handleMessage(message));
 	}
 
@@ -71,5 +77,9 @@ export default class InboxManager {
 
 	public get incomingThreadCategory() {
 		return incomingThreadCategory;
+	}
+
+	public get archivedThreadCategory() {
+		return archivedThreadCategory;
 	}
 }
