@@ -110,6 +110,11 @@ export class Thread {
 		return this;
 	}
 
+	public markread() {
+		this.read = true;
+		return this.save();
+	}
+
 	private async create() {
 		// Set the ID for this thread
 		this.id = this.client.settings!.get(ClientStorage.threadID) + 1;

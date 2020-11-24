@@ -32,7 +32,6 @@ export default class InboxManager {
 	}
 
 	public registerMessage(message: Message) {
-		// @ts-ignore
 		return this.queue.push(() => this.handleMessage(message));
 	}
 
