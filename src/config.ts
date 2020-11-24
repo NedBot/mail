@@ -5,3 +5,4 @@ export const clientCommandPrefix = "?";
 
 export const mainGuildID = "685930872821645376";
 export const inboxGuildID = "";
+export const incomingThreadCategory = "780590315031232532";
