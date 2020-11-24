@@ -23,9 +23,16 @@ export const CLIENT_OPTIONS: KlasaClientOptions = {
 	disabledCorePieces: ["commands"],
 
 	disableMentions: "everyone",
-	partials: ["MESSAGE", "REACTION"],
+	partials: ["MESSAGE", "REACTION", "CHANNEL"],
 	ws: {
-		intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS"]
+		intents: [
+			"GUILDS",
+			"GUILD_MEMBERS",
+			"GUILD_BANS",
+			"GUILD_MESSAGES",
+			"GUILD_MESSAGE_REACTIONS",
+			"DIRECT_MESSAGES"
+		]
 	},
 	pieceDefaults: {
 		commands: {
@@ -36,7 +43,9 @@ export const CLIENT_OPTIONS: KlasaClientOptions = {
 			runIn: ["text", "news"]
 		},
 		monitors: {
-			ignoreOthers: false
+			ignoreOthers: false,
+			ignoreBots: true,
+			ignoreBlacklistedUsers: false
 		}
 	}
 };
