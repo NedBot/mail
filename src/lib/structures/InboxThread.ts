@@ -269,7 +269,7 @@ export class Thread {
 		return channel;
 	}
 
-	private get channel() {
+	public get channel() {
 		return this.client.channels.cache.get(this.channelID!) as TextChannel;
 	}
 
