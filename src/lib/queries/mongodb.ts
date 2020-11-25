@@ -1,6 +1,6 @@
 import { KlasaClient } from "klasa";
 import { Databases } from "../../types/Enums";
-import { RawThread } from "../structures/InboxThread";
+import { RawThread, ThreadStatus } from "../structures/InboxThread";
 import { CommonQuery } from "./common";
 
 export class MongoCommonQuery implements CommonQuery {
@@ -42,6 +42,8 @@ export class MongoCommonQuery implements CommonQuery {
 
 	public async fetchAllThreadsForUser(userID: string) {
 		const threads = await this.fetchAllThreads();
-		return threads.filter((thread) => thread.userID === userID);
+		return threads.filter(
+			(thread) => thread.userID === userID && thread.status !== ThreadStatus.Open
+		);
 	}
 }
