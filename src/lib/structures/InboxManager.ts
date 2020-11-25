@@ -36,7 +36,7 @@ export default class InboxManager {
 	}
 
 	private async handleMessage(message: Message) {
-		const { author, content } = message;
+		const { author } = message;
 		if (this.isResponder(author.id)) return;
 		if (this.isBlocked(author.id)) return;
 
