@@ -180,8 +180,8 @@ export class Thread {
 	}
 
 	private async saveMessage(message: RawInboxMessage) {
-		this.messages.push(message);
 		await this.sendMessage(message);
+		this.messages.push(message);
 		return this.save();
 	}
 
