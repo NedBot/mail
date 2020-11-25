@@ -39,4 +39,9 @@ export class MongoCommonQuery implements CommonQuery {
 		await this.provider.update(Databases.Threads, query, thread);
 		return thread;
 	}
+
+	public async fetchAllThreadsForUser(userID: string) {
+		const threads = await this.fetchAllThreads();
+		return threads.filter((thread) => thread.userID === userID);
+	}
 }
