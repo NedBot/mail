@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, GuildMember, Message } from "discord.js";
 import {
 	mainGuildID,
 	inboxGuildID,
@@ -6,6 +6,7 @@ import {
 	archivedThreadCategory
 } from "../../config";
 import { ClientStorage } from "../../types/settings/ClientStorage";
+import { InboxMessage, InboxMessageReplyFlag, InboxMessageType } from "./InboxMessage";
 
 // Inbox structures
 import { InboxQueue } from "./InboxQueue";
@@ -49,6 +50,17 @@ export default class InboxManager {
 		await thread.receiveMessage(message);
 
 		return thread;
+	}
+
+	public async sendSystemMessage(destination: GuildMember, content: string, alert = false) {
+		const message = new InboxMessage()
+			.setType(InboxMessageType.System)
+			.setReplyFlag(InboxMessageReplyFlag.System)
+			.setContent(content);
+		if (alert) message.setAlert();
+
+		await destination.send(message.toEmbed()).catch(() => null);
+		return this;
 	}
 
 	private isResponder(userID: string) {

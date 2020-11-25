@@ -1,4 +1,5 @@
 import { Client, GuildMember, Message, TextChannel } from "discord.js";
+import { modmailReceived } from "../../config";
 import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
 import { InboxMessage, InboxMessageType, RawInboxMessage, Transcript } from "./InboxMessage";
@@ -133,6 +134,9 @@ export class Thread {
 
 		// Create the thread channel
 		await this.createChannel();
+
+		// Tell the user that we received their message
+		await this.client.inbox.sendSystemMessage(this.member!, modmailReceived);
 
 		// Update the thread ID
 		await this.client.settings!.update(ClientStorage.threadID, this.id);
