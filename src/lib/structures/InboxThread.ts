@@ -156,15 +156,20 @@ export class Thread {
 		const embed = new this.client.embed()
 			.setThumbnail(this.client.user!.displayAvatarURL())
 			.setTitle(`Thread #${this.id}`)
-			.setDescription([
-				`**Username:** ${user.tag}`,
-				`**User ID:** ${user.id}`,
-				`**Created On:** ${timestamp.display(user.createdAt)}`,
-				`**Joined On:** ${joinedAt ? timestamp.display(joinedAt) : "Unknown"}`,
-				`**Nickname:** ${nickname ?? "None"}`,
-				"─────────────",
-				`User has **${0}** previous logs.`
-			]);
+			.setDescription(
+				[
+					`**Username:** ${user.tag}`,
+					`**User ID:** ${user.id}`,
+					`**Created On:** ${timestamp.display(user.createdAt)}`,
+					`**Joined On:** ${joinedAt ? timestamp.display(joinedAt) : "Unknown"}`,
+					`**Nickname:** ${nickname ?? "None"}`,
+					"─────────────",
+					`User has **${0}** previous logs.`,
+					this.messages.length
+						? `Channel restored (**${this.messages.length}** missing messages).`
+						: null
+				].filter(Boolean)
+			);
 
 		await this.channel?.send(embed).catch(() => null);
 
