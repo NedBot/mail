@@ -4,6 +4,7 @@ import { Colors } from "../../types/Enums";
 export default class extends MessageEmbed {
 	public constructor(data?: MessageEmbed | MessageEmbedOptions) {
 		super(data);
+		this.setDefaultColor();
 	}
 
 	public setDefaultColor() {

@@ -179,9 +179,26 @@ export class Thread {
 		return this;
 	}
 
-	private saveMessage(message: RawInboxMessage) {
+	private async saveMessage(message: RawInboxMessage) {
 		this.messages.push(message);
+		await this.sendMessage(message);
 		return this.save();
+	}
+
+	private async sendMessage(message: RawInboxMessage) {
+		const inboxMessage = new InboxMessage(message);
+		const isReplyType = message.type === InboxMessageType.Reply;
+		const { channel } = this;
+
+		if (this.member && isReplyType)
+			await this.member
+				.send(inboxMessage.toEmbed())
+				.then(() => inboxMessage)
+				.catch(() => inboxMessage.setErrored());
+
+		if (channel) await channel.send(inboxMessage.toEmbed(isReplyType));
+
+		return this;
 	}
 
 	private async createChannel(tries: number = 1): Promise<TextChannel | null> {

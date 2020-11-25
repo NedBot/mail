@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import Embed from "./Embed";
 
 export class InboxMessage {
 	public type: InboxMessageType | null = null;
@@ -50,6 +51,14 @@ export class InboxMessage {
 	public setErrored() {
 		this.errored = true;
 		return this;
+	}
+
+	public toEmbed(isInboxMessage = false) {
+		const embed = new Embed().setThumbnail(this.author!.avatar).setDescription(this.toString());
+		if (this.isAlert) embed.setOrange();
+		if (this.errored) embed.setRed();
+		else if (isInboxMessage) embed.setGreen();
+		return embed;
 	}
 
 	public toString() {
