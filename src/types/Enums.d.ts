@@ -1,5 +1,6 @@
 export const enum Permissions {
-	Everyone
+	Everyone,
+	Responder
 }
 
 export const enum Colors {
