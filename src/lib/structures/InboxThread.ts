@@ -33,14 +33,20 @@ export class Thread {
 		return this.open();
 	}
 
-	public async restoreOpenThreadByID(threadID: number): Promise<this> {
+	public async restoreOpenThreadByID(threadID: number) {
 		const thread = await this.client.queries.fetchThreadByID(threadID);
 		if (thread) this.patch(thread);
 		return this;
 	}
 
-	public receiveMessage(message: Message) {
-		const inboxMessage = new InboxMessage(message).setType(InboxMessageType.Recipient);
+	public async restoreOpenThreadByChannelID(channelID: string) {
+		const thread = await this.client.queries.fetchThreadByChannelID(channelID);
+		if (thread && thread.status === ThreadStatus.Open) this.patch(thread);
+		return this;
+	}
+
+	public receiveMessage(message: Message, type: InboxMessageType = InboxMessageType.Recipient) {
+		const inboxMessage = new InboxMessage(message).setType(type);
 		return this.saveMessage(inboxMessage.toJSON());
 	}
 
@@ -214,7 +220,8 @@ export class Thread {
 
 	private async saveMessage(message: RawInboxMessage) {
 		await this.cancelClose();
-		await this.sendMessage(message);
+		if ([InboxMessageType.Recipient, InboxMessageType.Reply].includes(message.type))
+			await this.sendMessage(message);
 
 		const { channel } = this;
 		if (channel) channel.setParent(this.client.inbox.incomingThreadCategory);

@@ -119,11 +119,11 @@ export class InboxMessage {
 }
 
 export const enum InboxMessageType {
+	Recipient,
+	Reply,
 	Chat,
 	Command,
-	System,
-	Recipient,
-	Reply
+	System
 }
 
 export const enum InboxMessageReplyFlag {

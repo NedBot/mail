@@ -1,10 +1,24 @@
 import { KlasaMessage, Monitor } from "klasa";
 import { DMChannel } from "discord.js";
+import { Thread, ThreadStatus } from "../lib/structures/InboxThread";
+import { InboxMessageType } from "../lib/structures/InboxMessage";
 
 export default class extends Monitor {
 	public async run(message: KlasaMessage) {
-		if (message.guild) return;
-		if ((message.channel as DMChannel).partial) await message.channel.fetch();
-		this.client.inbox.registerMessage(message);
+		const isInboxGuild = message.guild && message.guild.id === this.client.inbox.inboxGuild!.id;
+
+		if (isInboxGuild && !message.author.bot) {
+			// Resolve the thread (if any)
+			const thread = new Thread(null, this.client);
+			await thread.restoreOpenThreadByChannelID(message.channel.id);
+
+			// Save the chat/command
+			const messageType = message.command ? InboxMessageType.Command : InboxMessageType.Chat;
+			if (thread.status !== ThreadStatus.Waiting) await thread.receiveMessage(message, messageType);
+		} else if (!message.guild) {
+			// Register DMs
+			if ((message.channel as DMChannel).partial) await message.channel.fetch();
+			this.client.inbox.registerMessage(message);
+		}
 	}
 }
