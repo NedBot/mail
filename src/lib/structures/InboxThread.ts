@@ -153,6 +153,7 @@ export class Thread {
 
 	private async sendHeader() {
 		const { user, joinedAt, nickname } = this.member!;
+		const threads = await this.client.queries.fetchAllThreadsForUser(user.id);
 		const embed = new this.client.embed()
 			.setThumbnail(this.client.user!.displayAvatarURL())
 			.setTitle(`Thread #${this.id}`)
@@ -164,7 +165,7 @@ export class Thread {
 					`**Joined On:** ${joinedAt ? timestamp.display(joinedAt) : "Unknown"}`,
 					`**Nickname:** ${nickname ?? "None"}`,
 					"─────────────",
-					`User has **${0}** previous logs.`,
+					`User has **${threads.length}** previous logs.`,
 					this.messages.length
 						? `Channel restored (**${this.messages.length}** missing messages).`
 						: null
