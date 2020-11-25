@@ -180,8 +180,14 @@ export class Thread {
 	}
 
 	private async saveMessage(message: RawInboxMessage) {
+		await this.cancelClose();
 		await this.sendMessage(message);
+
+		const { channel } = this;
+		if (channel) channel.setParent(this.client.inbox.incomingThreadCategory);
+
 		this.messages.push(message);
+		this.read = false;
 		return this.save();
 	}
 
