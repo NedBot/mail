@@ -3,6 +3,9 @@ import { modmailReceived } from "../../config";
 import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
 import { InboxMessage, InboxMessageType, RawInboxMessage, Transcript } from "./InboxMessage";
+import { Timestamp } from "klasa";
+
+const timestamp = new Timestamp("DD/MM/YY");
 
 export class Thread {
 	public client!: Client;
@@ -148,6 +151,26 @@ export class Thread {
 		return this.restore(false);
 	}
 
+	private async sendHeader() {
+		const { user, joinedAt, nickname } = this.member!;
+		const embed = new this.client.embed()
+			.setThumbnail(this.client.user!.displayAvatarURL())
+			.setTitle(`Thread #${this.id}`)
+			.setDescription([
+				`**Username:** ${user.tag}`,
+				`**User ID:** ${user.id}`,
+				`**Created On:** ${timestamp.display(user.createdAt)}`,
+				`**Joined On:** ${joinedAt ? timestamp.display(joinedAt) : "Unknown"}`,
+				`**Nickname:** ${nickname ?? "None"}`,
+				"─────────────",
+				`User has **${0}** previous logs.`
+			]);
+
+		await this.channel?.send(embed).catch(() => null);
+
+		return this;
+	}
+
 	private patch(thread: RawThread) {
 		this.status = thread.status;
 		this.id = thread.id;
@@ -226,6 +249,10 @@ export class Thread {
 		if (!channel) return this.createChannel(tries++);
 
 		this.channelID = channel.id;
+
+		// Send the modmail thread header
+		await this.sendHeader();
+
 		return channel;
 	}
 
