@@ -44,7 +44,8 @@ export const CLIENT_OPTIONS: KlasaClientOptions = {
 		},
 		monitors: {
 			ignoreOthers: false,
-			ignoreBots: true,
+			ignoreBots: false,
+			ignoreSelf: false,
 			ignoreBlacklistedUsers: false
 		}
 	}

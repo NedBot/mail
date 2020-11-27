@@ -39,7 +39,7 @@ export class Thread {
 		return this;
 	}
 
-	public async restoreOpenThreadByChannelID(channelID: string) {
+	public async restoreThreadByChannelID(channelID: string) {
 		const thread = await this.client.queries.fetchThreadByChannelID(channelID);
 		if (thread && thread.status === ThreadStatus.Open) this.patch(thread);
 		return this;
@@ -85,7 +85,6 @@ export class Thread {
 
 		// Close the thread
 		this.status = ThreadStatus.Closed;
-		this.channelID = null;
 		await this.save();
 
 		return this;
