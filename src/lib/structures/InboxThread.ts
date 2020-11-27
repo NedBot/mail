@@ -141,11 +141,11 @@ export class Thread {
 		this.id = this.client.settings!.get(ClientStorage.threadID) + 1;
 		this.status = ThreadStatus.Open;
 
-		// Create the thread channel
-		await this.createChannel();
-
 		// Tell the user that we received their message
 		await this.client.inbox.sendSystemMessage(this.member!, modmailReceived);
+
+		// Create the thread channel
+		await this.createChannel();
 
 		// Update the thread ID
 		await this.client.settings!.update(ClientStorage.threadID, this.id);
