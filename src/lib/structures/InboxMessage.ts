@@ -75,7 +75,7 @@ export class InboxMessage {
 			username ? `**${username}**` : null,
 			username ? "─────────────" : null,
 			this.content,
-			this.attachments.length ? "**__Attachments__**" : null,
+			this.attachments.length ? "\n**__Attachments__**" : null,
 			this.attachments.map((attachment) => `[${attachment.name}](${attachment.url})`).join("\n")
 		];
 
