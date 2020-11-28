@@ -8,13 +8,17 @@ export default class extends Monitor {
 		const isInboxGuild = message.guild && message.guild.id === this.client.inbox.inboxGuild!.id;
 
 		if (isInboxGuild && (message.author.bot ? !message.embeds.length : true)) {
-			// Resolve the thread (if any)
-			const thread = new Thread(null, this.client);
-			await thread.restoreThreadByChannelID(message.channel.id);
+			this.client.inbox.queue.push(async () => {
+				// Resolve the thread (if any)
+				const thread = new Thread(null, this.client);
+				await thread.restoreThreadByChannelID(message.channel.id);
 
-			// Save the chat/command
-			const messageType = message.command ? InboxMessageType.Command : InboxMessageType.Chat;
-			if (thread.status !== ThreadStatus.Waiting) await thread.receiveMessage(message, messageType);
+				// Save the chat/command
+				const messageType = message.command ? InboxMessageType.Command : InboxMessageType.Chat;
+				if (thread.status !== ThreadStatus.Waiting)
+					await thread.receiveMessage(message, messageType);
+				return thread;
+			});
 		} else if (!message.guild && !message.author.bot) {
 			// Register DMs
 			if ((message.channel as DMChannel).partial) await message.channel.fetch();

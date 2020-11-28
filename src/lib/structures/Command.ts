@@ -14,10 +14,13 @@ export abstract class InboxCommand extends Command {
 		super(store, file, directory, { ...options, permissionLevel: Permissions.Responder });
 	}
 
-	public async run(message: KlasaMessage, params: unknown[]) {
-		const thread = new Thread(null, this.client);
-		await thread.restoreThreadByChannelID(message.channel.id);
-		if (thread && thread.status === ThreadStatus.Open) return this.handle(message, thread, params);
+	public async run(message: KlasaMessage, params: unknown[]): Promise<any> {
+		this.client.inbox.queue.push(async () => {
+			const thread = new Thread(null, this.client);
+			await thread.restoreThreadByChannelID(message.channel.id);
+			if (thread && thread.status === ThreadStatus.Open)
+				return this.handle(message, thread, params);
+		});
 	}
 
 	public abstract handle(message: KlasaMessage, thread: Thread, params: unknown[]): Promise<any>;
