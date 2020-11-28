@@ -2,7 +2,13 @@ import { Client, GuildMember, Message, TextChannel } from "discord.js";
 import { modmailReceived } from "../../config";
 import { Tasks } from "../../types/Enums";
 import { ClientStorage } from "../../types/settings/ClientStorage";
-import { InboxMessage, InboxMessageType, RawInboxMessage, Transcript } from "./InboxMessage";
+import {
+	InboxMessage,
+	InboxMessageReplyFlag,
+	InboxMessageType,
+	RawInboxMessage,
+	Transcript
+} from "./InboxMessage";
 import { Timestamp } from "klasa";
 
 const timestamp = new Timestamp("DD/MM/YY");
@@ -50,8 +56,9 @@ export class Thread {
 		return this.saveMessage(inboxMessage.toJSON());
 	}
 
-	public reply(message: Message) {
+	public reply(message: Message, flag?: InboxMessageReplyFlag) {
 		const replyMessage = new InboxMessage(message).setType(InboxMessageType.Reply);
+		if (flag) replyMessage.setReplyFlag(flag);
 		return this.saveMessage(replyMessage.toJSON());
 	}
 
@@ -238,11 +245,11 @@ export class Thread {
 		const isReplyType = message.type === InboxMessageType.Reply;
 		const { channel } = this;
 
-		if (this.member && isReplyType)
-			await this.member
-				.send(inboxMessage.toEmbed())
-				.then(() => inboxMessage)
-				.catch(() => inboxMessage.setErrored());
+		if (isReplyType) {
+			const member = await this.client.inbox.resolveMember(this.userID);
+			if (member) await member.send(inboxMessage.toEmbed()).catch(() => inboxMessage.setErrored());
+			else inboxMessage.setErrored();
+		}
 
 		if (channel) await channel.send(inboxMessage.toEmbed(isReplyType));
 

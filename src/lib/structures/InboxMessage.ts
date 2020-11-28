@@ -67,7 +67,8 @@ export class InboxMessage {
 	public toString() {
 		const { author } = this;
 		let username: string | null = null;
-		if (author && this.replyFlag !== InboxMessageReplyFlag.Anonymous) username = author.name;
+		if (author) username = author.name;
+		if (this.replyFlag === InboxMessageReplyFlag.Anonymous) username = "Resonder";
 		if (this.replyFlag === InboxMessageReplyFlag.System) username = "System";
 		if (this.replyFlag === InboxMessageReplyFlag.Unnamed) username = null;
 

@@ -73,7 +73,7 @@ export default class InboxManager {
 		return blockedUsers.includes(userID);
 	}
 
-	private async resolveMember(userID: string) {
+	public async resolveMember(userID: string) {
 		if (!this.mainGuild) return null;
 		return this.mainGuild.members.fetch(userID).catch(() => null);
 	}
