@@ -99,13 +99,13 @@ export class Thread {
 
 	public async cancelClose() {
 		const task = this.client.schedule.get(`close_${this.id}`);
-		if (task) await task.delete().catch(() => null);
+		if (task) await task.delete();
 		return this;
 	}
 
 	private async scheduleClose(delay: number) {
 		await this.cancelClose();
-		await this.client.schedule.create(Tasks.CloseThread, delay, {
+		await this.client.schedule.create(Tasks.CloseThread, new Date(Date.now() + delay), {
 			id: `close_${this.id}`,
 			data: { threadID: this.id }
 		});
@@ -225,10 +225,10 @@ export class Thread {
 	}
 
 	private async saveMessage(message: RawInboxMessage) {
-		await this.cancelClose();
-
-		if ([InboxMessageType.Recipient, InboxMessageType.Reply].includes(message.type))
+		if ([InboxMessageType.Recipient, InboxMessageType.Reply].includes(message.type)) {
+			await this.cancelClose();
 			await this.sendMessage(message);
+		}
 
 		const { channel } = this;
 		const { incomingThreadCategory } = this.client.inbox;
