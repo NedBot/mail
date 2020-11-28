@@ -219,11 +219,14 @@ export class Thread {
 
 	private async saveMessage(message: RawInboxMessage) {
 		await this.cancelClose();
+
 		if ([InboxMessageType.Recipient, InboxMessageType.Reply].includes(message.type))
 			await this.sendMessage(message);
 
 		const { channel } = this;
-		if (channel) channel.setParent(this.client.inbox.incomingThreadCategory);
+		const { incomingThreadCategory } = this.client.inbox;
+		if (channel && channel.parentID !== incomingThreadCategory)
+			channel.setParent(this.client.inbox.incomingThreadCategory);
 
 		this.messages.push(message);
 		this.read = false;
